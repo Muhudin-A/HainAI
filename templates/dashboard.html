@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- FullCalendar CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+    
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    
+    <!-- FullCalendar JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    
+    <style>
+        body {
+            background-color: #f0f4f8; /* Light background for better contrast */
+            font-family: 'Arial', sans-serif; /* Modern font */
+        }
+
+        .container {
+            max-width: 1200px; /* Limit the container width for a neat layout */
+            margin: 0 auto; /* Center the container */
+        }
+
+        .card {
+            border-radius: 15px; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            background-color: #ffffff; /* White background for cards */
+            transition: transform 0.2s; /* Smooth hover effect */
+        }
+
+        .card:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+        }
+
+        .card-header {
+            background-color: #007bff; /* Primary color for header */
+            color: white; /* White text for header */
+            border-radius: 15px 15px 0 0; /* Rounded top corners */
+        }
+
+        .chart-container {
+            margin: 20px 0; /* Space between charts */
+            padding: 20px; /* Padding inside chart containers */
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Primary button color */
+            border: none; /* Remove border */
+            border-radius: 25px; /* Rounded button */
+            padding: 10px 20px; /* Padding inside button */
+            transition: background-color 0.3s; /* Smooth color transition */
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        .task-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #f8f9fa; /* Light background for task list */
+            border-radius: 10px; /* Rounded corners */
+        }
+
+        .list-group-item {
+            border: none; /* Remove borders between list items */
+            border-radius: 5px; /* Slightly rounded list items */
+            transition: background-color 0.2s; /* Smooth background color change */
+        }
+
+        .list-group-item:hover {
+            background-color: #e9ecef; /* Light grey on hover */
+        }
+
+        #calendar {
+            border-radius: 10px; /* Rounded corners for calendar */
+        }
+
+        .fc-day-grid-event {
+            background-color: #007bff; /* Event color */
+            color: white; /* Event text color */
+            border-radius: 5px; /* Rounded corners for events */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1>Welcome, {{ first_name }}!</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card chart-container">
+                    <div class="card-body">
+                        <canvas id="myBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card chart-container">
+                    <div class="card-body">
+                        <canvas id="myPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>User Calendar</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Task List</h5>
+                    </div>
+                    <div class="card-body task-list">
+                        <ul class="list-group">
+                            <li class="list-group-item">Task 1 <button class="btn btn-sm btn-danger float-right">Delete</button></li>
+                            <li class="list-group-item">Task 2 <button class="btn btn-sm btn-danger float-right">Delete</button></li>
+                            <li class="list-group-item">Task 3 <button class="btn btn-sm btn-danger float-right">Delete</button></li>
+                            <li class="list-group-item">Task 4 <button class="btn btn-sm btn-danger float-right">Delete</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Learning Button -->
+        <div class="text-center mt-4">
+            <a href="/pred.html" class="btn btn-primary">Start Learning</a>
+        </div>
+    </div>
+
+    <script>
+        // Bar chart data
+        let barData = {
+            labels: ['Moderate', 'Mild', 'Normal'],
+            datasets: [{
+                label: 'Assessment Results',
+                data: [12, 19, 3], // Example initial data
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        // Configuration for the bar chart
+        const barConfig = {
+            type: 'bar',
+            data: barData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        // Create the bar chart
+        const myBarChart = new Chart(
+            document.getElementById('myBarChart'),
+            barConfig
+        );
+
+        // Pie chart data
+        let pieData = {
+            labels: ['Memory', 'Attentiveness', 'Comprehensiveness'],
+            datasets: [{
+                label: 'Distribution of Categories',
+                data: [10, 5, 15], // Example initial data
+                backgroundColor: [
+                    'rgba(255, 205, 86, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 205, 86, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        // Configuration for the pie chart
+        const pieConfig = {
+            type: 'pie',
+            data: pieData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (context.parsed > 0) {
+                                    label += ': ' + context.parsed;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Create the pie chart
+        const myPieChart = new Chart(
+            document.getElementById('myPieChart'),
+            pieConfig
+        );
+
+        // Initialize the calendar
+        $(document).ready(function() {
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                editable: true,
+                events: [
+                    {
+                        title: 'Sample Event',
+                        start: '2024-10-20'
+                    }
+                ],
+                selectable: true,
+                selectHelper: true,
+                select: function(start, end) {
+                    const title = prompt('Event Title:');
+                    if (title) {
+                        const eventData = {
+                            title: title,
+                            start: start,
+                            end: end
+                        };
+                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                    }
+                    $('#calendar').fullCalendar('unselect');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,401 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: url('img/background.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+}
+
+.container {
+    max-width: 800px; /* Keep this for larger screens */
+    width: 90%; /* Allow the container to be more responsive */
+    margin: 20px;
+    padding: 30px; /* Increased padding for better spacing */
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 15px; /* More pronounced rounded corners */
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+    text-align: center;
+}
+
+/* Heading Styles */
+h1 {
+    font-size: 2.8em; /* Slightly smaller for better hierarchy */
+    color: #003c71;
+    margin-bottom: 15px;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+/* Scrambled Text Styles */
+.scrambled-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 12px;
+    background-color: #e0e0e0; /* Light grey background */
+    border: 2px dashed #003c71; 
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Grid Styles */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Responsive grid */
+    gap: 15px;
+    margin: 20px 0;
+    width: 100%; /* Fill the container width */
+}
+
+.grid-item {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.grid-item:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.02); /* More subtle scaling */
+}
+
+/* Button Styles */
+button, input[type="submit"], .btn {
+    width: 100%;
+    padding: 12px 0; /* Adjusted padding for better touch target */
+    background-color: #0047ab; 
+    color: white;
+    border: none;
+    border-radius: 8px; 
+    font-size: 1rem;
+    font-weight: bold; 
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+}
+
+button:hover, input[type="submit"]:hover, .btn:hover {
+    background-color: #003494; 
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+}
+
+/* Feedback Styles */
+.feedback {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #d9534f; /* Red for feedback messages */
+}
+
+/* Next Test Section Styles */
+.next-test {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: none; 
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2.5rem; 
+    }
+
+    .scrambled-text {
+        font-size: 1.2rem; 
+    }
+
+    button {
+        font-size: 0.9rem; 
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: #f2f2f2; /* Light background for better contrast */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2.5em; /* Larger heading for emphasis */
+    color: #0047ab; /* Primary color for headers */
+    margin-bottom: 20px; /* Spacing below the heading */
+    text-align: center; /* Center the text */
+}
+
+p {
+    font-size: 1.2em; /* Slightly larger for readability */
+    margin-bottom: 20px; /* Spacing below the paragraph */
+    text-align: center; /* Center the text */
+}
+
+#letter-sequence {
+    font-size: 2.5em; /* Larger font for the sequence display */
+    font-weight: bold;
+    text-align: center; /* Center the sequence */
+    margin: 20px 0; /* Spacing above and below */
+}
+
+button {
+    background-color: #0047ab; /* Primary button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 15px 20px; /* Padding for comfort */
+    font-size: 1.2em; /* Font size for buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin: 10px 0; /* Spacing between buttons */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+}
+
+button:hover {
+    background-color: #003494; /* Darker shade on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+#answer-section {
+    margin-top: 30px; /* Spacing above the answer section */
+    text-align: center; /* Center the text */
+}
+
+#shape-selection-message {
+    font-size: 1.5em; /* Emphasized font size for instructions */
+    margin-bottom: 15px; /* Spacing below the message */
+}
+
+#shape-options {
+    display: flex; /* Flexbox for shape options */
+    justify-content: center; /* Center the options */
+    flex-wrap: wrap; /* Allow wrapping */
+    gap: 10px; /* Space between shape buttons */
+}
+
+.shape-button {
+    width: 60px; /* Fixed width for shape buttons */
+    height: 60px; /* Fixed height for shape buttons */
+    background-color: #e0e0e0; /* Light grey background */
+    border: 2px solid #ccc; /* Border around shape buttons */
+    border-radius: 50%; /* Rounded shapes */
+    display: flex; /* Flexbox for centering content */
+    justify-content: center; /* Center the content */
+    align-items: center; /* Center the content */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+}
+
+.shape-button:hover {
+    background-color: #d1d1d1; /* Darker grey on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+#selected-shapes {
+    font-size: 1.5em; /* Larger font for selected shapes */
+    margin: 15px 0; /* Spacing above and below */
+}
+
+#input-box {
+    width: 100%; /* Full width input */
+    padding: 10px; /* Padding for comfort */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1.2em; /* Larger font size for input */
+    margin-top: 10px; /* Spacing above the input */
+}
+
+#result {
+    margin-top: 20px; /* Spacing above result */
+    font-size: 1.5em; /* Larger font for results */
+    color: #d9534f; /* Red color for emphasis */
+    text-align: center; /* Center the text */
+}
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: #f8f9fa; /* Light background for a clean look */
+    color: #343a40; /* Dark text color for contrast */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    background: white; /* White background for the container */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 30px; /* Internal spacing */
+    width: 100%;
+    max-width: 600px; /* Limit the width */
+    text-align: center; /* Centered text alignment */
+}
+
+h1 {
+    font-size: 2.5em; /* Large heading for prominence */
+    color: #007bff; /* Primary color for headers */
+    margin-bottom: 20px; /* Spacing below the heading */
+}
+
+p {
+    font-size: 1.2em; /* Slightly larger font for readability */
+    margin-bottom: 15px; /* Spacing below the paragraph */
+}
+
+.scrambled-text {
+    font-size: 1.5em; /* Larger font for scrambled text */
+    font-weight: bold;
+    margin: 20px 0; /* Spacing above and below */
+    color: #6c757d; /* Grey color for scrambled text */
+}
+
+.answer-section {
+    margin-top: 20px; /* Spacing above the answer section */
+}
+
+textarea {
+    width: 100%; /* Full width for the textarea */
+    height: 100px; /* Fixed height for the textarea */
+    padding: 10px; /* Internal padding for comfort */
+    border: 1px solid #ced4da; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1.2em; /* Larger font size for the textarea */
+    resize: none; /* Disable resizing */
+}
+
+button {
+    background-color: #007bff; /* Primary button color */
+    color: white; /* White text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 12px 20px; /* Padding for comfort */
+    font-size: 1.2em; /* Font size for buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin-top: 10px; /* Spacing above buttons */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.feedback {
+    font-size: 1.2em; /* Font size for feedback */
+    margin-top: 15px; /* Spacing above feedback */
+    color: #28a745; /* Green color for positive feedback */
+    text-align: center; /* Center the feedback text */
+}
+
+.next-test {
+    margin-top: 30px; /* Spacing above the next test section */
+    display: none; /* Initially hidden */
+}
+
+.next-test h2 {
+    font-size: 1.8em; /* Slightly smaller font for next test title */
+    color: #6c757d; /* Grey color for subheadings */
+}
+
+.dyslexia_assessment-button {
+    text-align: center; /* Center the button */
+}
+
+#go-to-dyslexia_assessment {
+    background-color: #ffc107; /* Warning color for finished button */
+    color: white; /* White text */
+    padding: 12px 20px; /* Padding for comfort */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1.2em; /* Font size for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+}
+
+#go-to-dyslexia_assessment:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+/* Global Styles */
+body {
+    background-color: #e9ecef; /* Light grey background */
+    color: #343a40; /* Dark text color for contrast */
+}
+
+.container {
+    background-color: #ffffff; /* White background for the container */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 30px; /* Internal padding */
+    margin-top: 20px; /* Margin above the container */
+}
+
+/* Heading Styles */
+h1 {
+    font-size: 2.5rem; /* Large heading */
+    color: #007bff; /* Primary color */
+    margin-bottom: 20px; /* Spacing below the heading */
+    text-align: center; /* Centered heading */
+}
+
+/* Chart Styles */
+canvas {
+    border-radius: 8px; /* Rounded corners for charts */
+    background-color: #f8f9fa; /* Light background for charts */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for charts */
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column; /* Stack columns on small screens */
+    }
+    .col-md-6, .col-md-12 {
+        margin-bottom: 20px; /* Spacing below each column */
+    }
+}

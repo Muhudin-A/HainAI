@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HainAI</title>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <style>
+    body {
+      background-image: url('/static/img/background.jpeg');
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      backdrop-filter: blur(5px); /* Optional: adds a blur effect behind the content */
+      padding: 20px;
+    }
+
+    .content {
+      background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background for readability */
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+
+    .buttons_bn {
+      display: flex;
+      justify-content: center;
+      gap: 20px; /* Space between buttons */
+    }
+
+    .btn_bn {
+      background-color: #007BFF; /* Button color */
+      color: white;
+      padding: 15px 30px;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s, transform 0.3s;
+      font-size: 1rem;
+    }
+
+    .btn_bn:hover {
+      background-color: #0056b3; /* Darker shade on hover */
+      transform: translateY(-2px); /* Slight lift effect */
+    }
+
+    .btn_bn:active {
+      transform: translateY(1px); /* Slight depression effect */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="content">
+      <h1>Welcome to HainAI</h1>
+      <p>Helping dyslexic individuals learn with personalized AI support</p>
+      <div class="buttons_bn">
+        <a href="{{ url_for('signin') }}" class="btn_bn">Sign In</a>
+        <a href="{{ url_for('signup') }}" class="btn_bn">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

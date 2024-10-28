@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dyslexia Learning Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <style>
+        #output {
+            display: none;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .media {
+            width: 100%;
+            height: auto;
+        }
+        .animated {
+            animation: fadeIn 2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Dyslexia Learning Assistant</h2>
+        <form id="dyslexia-form">
+            <div class="mb-3">
+                <label for="topic" class="form-label">Select Topic:</label>
+                <select class="form-select" id="topic" required>
+                    <option value="" disabled selected>Select a topic</option>
+                    <option value="Gravity">Gravity</option>
+                    <option value="AI">AI</option>
+                    <option value="Photosynthesis">Photosynthesis</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="dyslexia_level" class="form-label">Select Dyslexia Level:</label>
+                <select class="form-select" id="dyslexia_level" required>
+                    <option value="" disabled selected>Select a level</option>
+                    <option value="Mild">Mild</option>
+                    <option value="Moderate">Moderate</option>
+                    <option value="Severe">Severe</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Get Explanation</button>
+        </form>
+
+        <div class="mt-4 animated" id="output">
+            <h4>Explanation:</h4>
+            <p id="explanation"></p>
+            <h4>Example:</h4>
+            <p id="example"></p>
+            <h4>Media Aids:</h4>
+            <img id="media_aids" class="media" alt="Visual aid">
+            <h4>Adaptive Response:</h4>
+            <p id="adaptive_response"></p>
+            <button id="read_aloud" class="btn btn-secondary mt-3">Read Aloud</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#output').hide();
+
+            $('#dyslexia-form').on('submit', function(e){
+                e.preventDefault();
+                
+                let topic = $('#topic').val();
+                let dyslexia_level = $('#dyslexia_level').val();
+
+                $.ajax({
+                    url: 'get_explanation.php',
+                    method: 'POST',
+                    data: { topic: topic, dyslexia_level: dyslexia_level },
+                    success: function(response) {
+                        let data = JSON.parse(response);
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            $('#output').show().css('opacity', 1);
+                            $('#explanation').text(data.explanation);
+                            $('#example').text(data.example);
+                            $('#adaptive_response').text(data.adaptive_response);
+                            
+                            // Display the media (image, video, etc.)
+                            if (data.media_aids.endsWith('.mp4')) {
+                                $('#media_aids').replaceWith('<video id="media_aids" class="media" controls><source src="' + data.media_aids + '" type="video/mp4"></video>');
+                            } else {
+                                $('#media_aids').attr('src', data.media_aids);
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Add voice-over feature
+            $('#read_aloud').click(function() {
+                const speech = new SpeechSynthesisUtterance($('#explanation').text());
+                window.speechSynthesis.speak(speech);
+            });
+        });
+    </script>
+</body>
+</html>

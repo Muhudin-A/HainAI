@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Test</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+<style>
+    /* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #83a4d4, #b6fbff);
+    color: #333;
+}
+
+/* Container */
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Title */
+.title {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #007BFF;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Description */
+.description {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+/* Letter Sequence */
+.letter-sequence {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 20px 0;
+    padding: 10px;
+    border: 2px dashed #007BFF;
+    border-radius: 10px;
+    animation: pulse 2s infinite;
+}
+
+/* Button Styles */
+.btn {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Answer Section */
+.answer-section {
+    margin-top: 30px;
+}
+
+/* Selection Message */
+.selection-message {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+/* Shape Options */
+.shape-options {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Your Selection */
+.your-selection {
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+
+/* Selected Shapes */
+.selected-shapes {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Input Box */
+.input-box {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 2px solid #007BFF;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+/* Result Display */
+.result {
+    margin-top: 30px;
+    font-size: 1.5em;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Memory Test</h1>
+        <p class="description">Remember the following sequence:</p>
+        <div id="letter-sequence" class="letter-sequence"></div>
+        <button id="start-test-btn" class="btn start-btn">Start Test</button>
+
+        <!-- Answer input section -->
+        <div id="answer-section" class="answer-section" style="display:none;">
+            <h2 id="shape-selection-message" class="selection-message">Select the shapes in the correct order:</h2>
+            <div id="shape-options" class="shape-options"></div> <!-- Shape buttons will be added here -->
+            <h3 class="your-selection">Your selection:</h3>
+            <div id="selected-shapes" class="selected-shapes"></div> <!-- Displays selected shapes -->
+            <input type="text" id="input-box" class="input-box" placeholder="Type your answer here" />
+            <button id="submit-answer-btn" class="btn submit-btn">Submit Answer</button>
+        </div>
+
+        <!-- Result display section -->
+        <div id="result" class="result" style="display:none;"></div> <!-- Initially hidden -->
+    </div>
+
+    <script src="{{ url_for('static', filename='js/memory_test.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dyslexia Learning - Personality Identification</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #e0f7fa 30%, #80deea 90%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        animation: fadeIn 1s ease-in-out;
+      }
+    
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    
+      .container {
+        text-align: center;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        padding: 30px;
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+      }
+    
+      h1 {
+        color: #00796b;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+    
+      .analogy {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 20px;
+        flex-wrap: wrap; /* Allow wrapping for smaller screens */
+      }
+    
+      .choice {
+        border: 2px solid #00796b;
+        border-radius: 10px;
+        padding: 20px;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        background-color: #ffffff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+    
+      .choice img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+        transition: transform 0.3s;
+      }
+    
+      .choice:hover {
+        transform: scale(1.05) rotate(2deg);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+    
+      .selected {
+        border-color: #004d40;
+        background-color: rgba(0, 121, 107, 0.1);
+      }
+    
+      .confirm-btn {
+        display: none;
+        margin-top: 30px;
+        padding: 12px 25px;
+        font-size: 18px;
+        background-color: #00796b;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+    
+      .confirm-btn:hover {
+        background-color: #004d40;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      }
+    </style>
+      </head>
+  <body>
+    <div class="container">
+      <h1>Select What Interests You</h1>
+      <div class="analogy" id="analogyContainer">
+        <!-- Image-based choices -->
+        <div class="choice" onclick="selectOption(1)" id="choice1">
+          <img src="/static/img/Fashion Design.jpg" alt="Fashion">
+          <p>Fashion</p>
+        </div>
+        <div class="choice" onclick="selectOption(2)" id="choice2">
+          <img src="/static/img/Music.jpg" alt="Music">
+          <p>Music</p>
+        </div>
+      </div>
+
+      <!-- Confirm button for progression -->
+      <button class="confirm-btn" id="confirmBtn" onclick="nextAnalogy()">Confirm</button>
+    </div>
+
+    <script>
+      let currentStep = 0;
+      let userSelections = [];
+
+// An array of analogy steps
+const analogies = [
+  { choices: ['Fashion', 'Music'], images: ['/static/img/Fashion Design.jpg', '/static/img/Music.jpg'] },
+  { choices: ['Sports', 'Technology'], images: ['/static/img/Outdoor games.jpg', '/static/img/Coding.jpg'] },
+  { choices: ['Art', 'Movies'], images: ['/static/img/Art.jpg', '/static/img/Movies.jpg'] },
+  { choices: ['Nature', 'Board games'], images: ['/static/img/Nature and outdoor.jpg', '/static/img/Board games.jpg'] },
+  { choices: ['Toys', 'Outdoor games'], images: ['/static/img/Toys.jpg', '/static/img/Outdoor games.jpg'] },
+  { choices: ['Photography', 'Film making'], images: ['/static/img/Photography.jpg', '/static/img/Film making.jpg'] },
+  { choices: ['Crafting', 'Carpentry'], images: ['/static/img/Crafting.jpg', '/static/img/Carpentry.jpg'] },
+  { choices: ['Gardening and Horticulture', 'Fishing'], images: ['/static/img/Gardening and Horticulture.jpg', '/static/img/Fishing.jpg'] },
+  { choices: ['Automotive and Cars', 'Engineering'], images: ['/static/img/Automotive and Cars.jpg', '/static/img/Engineering.jpg'] },
+
+
+        // Add more analogy pairs as needed
+      ];
+
+      let selectedChoice = null;
+
+      function selectOption(choice) {
+        selectedChoice = choice;
+
+        // Highlight the selected option
+        document.getElementById('choice1').classList.remove('selected');
+        document.getElementById('choice2').classList.remove('selected');
+        
+        document.getElementById(`choice${choice}`).classList.add('selected');
+
+        // Show confirm button
+        document.getElementById('confirmBtn').style.display = 'block';
+      }
+
+      function nextAnalogy() {
+        // Save the user's selection
+        userSelections.push(analogies[currentStep].choices[selectedChoice - 1]);
+        console.log('User selected:', userSelections);
+
+        currentStep++;
+
+        // Hide the confirm button initially
+        document.getElementById('confirmBtn').style.display = 'none';
+
+        // If more analogies are available, display the next set
+        if (currentStep < analogies.length) {
+          const container = document.getElementById('analogyContainer');
+          container.innerHTML = ''; // Clear previous analogy
+
+          // Display the next analogy
+          analogies[currentStep].choices.forEach((choice, index) => {
+            const choiceDiv = document.createElement('div');
+            choiceDiv.className = 'choice';
+            choiceDiv.id = `choice${index + 1}`;
+            choiceDiv.onclick = () => selectOption(index + 1);
+
+            const img = document.createElement('img');
+            img.src = analogies[currentStep].images[index];
+            img.alt = choice;
+
+            const p = document.createElement('p');
+            p.textContent = choice;
+
+            choiceDiv.appendChild(img);
+            choiceDiv.appendChild(p);
+            container.appendChild(choiceDiv);
+          });
+        } else {
+          // All choices are made, analyze the personality
+          analyzePersonality();
+        }
+      }
+
+      function analyzePersonality() {
+    let personality = '';
+
+    // Simple personality analysis based on the user's selections
+    if (userSelections.includes('Fashion') && userSelections.includes('Art')) {
+      personality = 'Creative and Visual Learner';
+    } else if (userSelections.includes('Technology') && userSelections.includes('Movies')) {
+      personality = 'Analytical and Logical Learner';
+    } else if (userSelections.includes('Sports')) {
+      personality = 'Active and Hands-on Learner';
+    } else {
+      personality = 'Mixed Learning Style';
+    }
+
+    // Get user ID from session or another method (e.g., hardcode for testing)
+    const userId = 1; // Replace with actual user ID logic
+
+    // Send personality data to the server
+    fetch('http://127.0.0.1:5000/save_personality', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: `user_id=${userId}&personality=${personality}`
+  })
+
+    .then(response => response.json()) // Parse JSON from response
+    .then(data => {
+      if (data.status === 'success') {
+        // Show confirmation popup
+        alert('Your personality has been saved successfully!');
+
+    // Redirect the user to the attention test page served by your web server
+    window.location.href = 'http://127.0.0.1:5000/attention_test';
+  } else {
+    alert('Error saving personality data: ' + data.message);
+  }
+})    .catch(error => {
+      console.error('Error:', error);
+      alert('There was an error saving the data.');
+    });
+  }
+
+
+    </script>
+  </body>
+  </html>
