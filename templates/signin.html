@@ -3,133 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In HainAI</title>
+    <title>Sign In - HainAI</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="{{ url_for('static', filename='js/1script.js') }}"></script>
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(to right, #00c6ff, #0072ff);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-            text-align: center;
+    <script src="{{ url_for('static', filename='js/1script.js') }}" defer></script>
+<style>
+    /* General Reset */
+    body, h2, p, a, label, input {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #eef3f8; /* Subtle light background */
+        color: #333; /* Darker text for readability */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+    
+    /* Container Styling */
+    .form-container {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        max-width: 400px;
+        width: 90%;
+        padding: 25px 30px;
+        text-align: center;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
         }
-
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .form-container h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #0056b3; /* Accent color for headers */
+    }
+    
+    .form-container p {
+        font-size: 0.9rem;
+        margin-top: 15px;
+    }
+    
+    /* Form Elements */
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    label {
+        font-size: 0.9rem;
+        text-align: left;
+        display: block;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        background-color: #f9f9f9;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+    
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+        border-color: #0056b3; /* Highlighted color */
+        background-color: #fff;
+        box-shadow: 0 0 5px rgba(0, 86, 179, 0.2);
+    }
+    
+    input[type="submit"] {
+        background-color: #0056b3; /* Primary button color */
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    
+    input[type="submit"]:hover {
+        background-color: #003d80; /* Slightly darker hover color */
+        transform: scale(1.05);
+    }
+    
+    a {
+        color: #0056b3;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    a:hover {
+        color: #003d80; /* Hover color for links */
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
         .form-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 400px;
-            transition: transform 0.3s ease;
+            padding: 20px 25px;
         }
-
-        .form-container:hover {
-            transform: translateY(-5px);
+    
+        .form-container h2 {
+            font-size: 1.5rem;
         }
-
-        h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-size: 1rem;
-            text-align: left;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="date"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            font-size: 1rem;
-            transition: background 0.3s ease;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="date"]:focus,
-        input[type="password"]:focus {
-            background: rgba(255, 255, 255, 0.5);
-            outline: none;
-        }
-
-        input[type="submit"] {
-            background: #de3d5d;
-            color: #fff;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s ease, transform 0.3s ease;
-        }
-
-        input[type="submit"]:hover {
-            background: #b72d45;
-            transform: translateY(-2px);
-        }
-
-        p {
-            margin-top: 20px;
-            font-size: 0.9rem;
-        }
-
-        a {
-            color: #ff6f61;
-            text-decoration: underline;
-            transition: color 0.3s ease;
-        }
-
-        a:hover {
-            color: #de3d5d;
-        }
-
-        @media (max-width: 600px) {
-            .form-container {
-                padding: 20px;
-            }
-
-            h2 {
-                font-size: 1.5rem;
-            }
-
-            input[type="submit"] {
-                padding: 10px;
-            }
-        }
-    </style>
+    }
+    
+</style>
 </head>
 <body>
     <div class="form-container">
         <h2>Sign In</h2>
-        <form action="/signin" method="POST"> <!-- Updated route for sign-in -->
-            <label for="first-name">First Name:</label>
-            <input type="text" id="first-name" name="first_name" required>
+        <form action="/signin" method="POST">
+            <div class="form-group">
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="first_name" required>
+            </div>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-            <input type="submit" value="Sign In">
+            <div class="form-group">
+                <input type="submit" value="Sign In">
+            </div>
         </form>
-        <p>New account? <a href="/signup">Sign Up</a></p> <!-- Fixed Sign-Up link -->
+        <p>New here? <a href="/signup">Sign Up</a></p>
     </div>
 </body>
 </html>

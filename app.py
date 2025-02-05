@@ -1,273 +1,164 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
-import mysql.connector
-import datetime
-import bcrypt
-import csv  # Import csv module for loading data
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.urls import path
+from django.db import connection
+from django.contrib.auth.hashers import make_password, check_password
+from django.utils import timezone
+import csv
 
-app = Flask(__name__)
+# Utility function to execute a query and fetch results
+def execute_query(query, params=None):
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        if query.strip().upper().startswith("SELECT"):
+            return cursor.fetchall()
+        else:
+            connection.commit()
+            return cursor.rowcount
 
-# MySQL database connection
-def get_db_connection():
-    try:
-        conn = mysql.connector.connect(
-            host='localhost',
-            user='root',  # Replace with your MySQL username
-            password='',  # Replace with your MySQL password
-            database='das_db'  # Replace with your actual database name
-        )
-        return conn
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        return None
+# Home view
+def index(request):
+    return render(request, 'index.html')
 
-# Home route
-@app.route('/')
-def index():
-    return render_template('index.html')
+# Sign-up view
+def signup(request):
+    if request.method == 'POST':
+        first_name = request.POST['fname']
+        last_name = request.POST['lname']
+        dob = request.POST['dob']
+        password = make_password(request.POST['password'])
 
-# Route to render the sign-up page
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'GET':
-        return render_template('signup.html')
-    
-    # Handle form submission
-    first_name = request.form['fname']
-    last_name = request.form['lname']
-    dob = request.form['dob']
-    password = request.form['password']
-
-    # Hash the password before storing it
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
-    # Insert the user into the database
-    conn = get_db_connection()
-    if not conn:
-        return "Database connection error", 500
-    
-    cursor = conn.cursor()
-    try:
         query = """
-            INSERT INTO users (first_name, last_name, dob, password) 
+            INSERT INTO users (first_name, last_name, dob, password)
             VALUES (%s, %s, %s, %s)
         """
-        cursor.execute(query, (first_name, last_name, dob, hashed_password))
-        conn.commit()
-        return redirect(url_for('signin'))  # Redirect to the signin page
-    except mysql.connector.Error as err:
-        return f"An error occurred: {str(err)}", 500  # Improved error handling
-    finally:
-        cursor.close()
-        conn.close()
+        try:
+            execute_query(query, (first_name, last_name, dob, password))
+            return redirect('signin')
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
-@app.route('/signin', methods=['GET', 'POST'])
-def signin():
-    if request.method == 'GET':
-        return render_template('signin.html')
-    
-    first_name = request.form.get('first_name')
-    password = request.form.get('password')
+    return render(request, 'signup.html')
 
-    if not first_name or not password:
-        return render_template('signin.html', error="Please provide both first name and password")
+# Sign-in view
+def signin(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        password = request.POST.get('password')
 
-    conn = get_db_connection()
-    if not conn:
-        return render_template('signin.html', error="Database connection error")
+        if not first_name or not password:
+            return render(request, 'signin.html', {'error': "Please provide both first name and password"})
 
-    cursor = conn.cursor(dictionary=True)
-    try:
-        cursor.execute("SELECT * FROM users WHERE first_name=%s", (first_name,))
-        user = cursor.fetchone()  # Fetch the first matching user
-
-        if user and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
-            return redirect(url_for('selection'))
+        query = "SELECT * FROM users WHERE first_name=%s"
+        user = execute_query(query, (first_name,))
+        if user and check_password(password, user[0][4]):  # Assuming password is the 5th column
+            return redirect('selection')
         else:
-            return render_template('signin.html', error="Invalid credentials")
-    except mysql.connector.Error as err:
-        return render_template('signin.html', error=f"Database error: {str(err)}")
-    finally:
-        if cursor:
-            cursor.fetchall()  # Ensure all results are fetched to avoid the error
-        cursor.close()
-        conn.close()
+            return render(request, 'signin.html', {'error': "Invalid credentials"})
 
-# New route for the selection page
-@app.route('/selection', methods=['GET'])
-def selection():
-    return render_template('selection.html')  # Render the selection page
+    return render(request, 'signin.html')
 
-# Save personality data
-@app.route('/save_personality', methods=['POST'])
-def save_personality():
-    user_id = request.form.get('user_id')  # Ensure this is passed from the client
-    personality = request.form.get('personality')
+# Selection view
+def selection(request):
+    return render(request, 'selection.html')
 
-    if not user_id or not personality:
-        return jsonify({'status': 'error', 'message': 'Invalid input data'}), 400
+# Save personality data view
+def save_personality(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        personality = request.POST.get('personality')
 
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({'status': 'error', 'message': 'Database connection error'}), 500
+        if not user_id or not personality:
+            return JsonResponse({'status': 'error', 'message': 'Invalid input data'}, status=400)
 
-    cursor = conn.cursor()
-    try:
-        # Insert personality
         query = "INSERT INTO user_personality (user_id, personality) VALUES (%s, %s)"
-        cursor.execute(query, (user_id, personality))
-        conn.commit()
-        return jsonify({'status': 'success', 'message': 'Personality saved successfully!'})
-    except mysql.connector.Error as err:
-        return jsonify({'status': 'error', 'message': str(err)}), 500  # Improved error handling
-    finally:
-        cursor.close()
-        conn.close()
+        try:
+            execute_query(query, (user_id, personality))
+            return JsonResponse({'status': 'success', 'message': 'Personality saved successfully!'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-# Routes for different tests
-@app.route('/attention_test')
-def attention_test():
-    return render_template('attention_test.html')
+# Test views
+def attention_test(request):
+    return render(request, 'attention_test.html')
 
-@app.route('/memory_test')
-def memory_test():
-    return render_template('memory_test.html')
+def memory_test(request):
+    return render(request, 'memory_test.html')
 
-@app.route('/reading_test')
-def reading_test():
-    return render_template('reading_test.html')
+def reading_test(request):
+    return render(request, 'reading_test.html')
 
-# Save attention test results
-@app.route('/save_attention_result', methods=['POST'])
-def save_attention_result():
-    return save_test_result('attention')
+# Save test result view
+def save_test_result(request, test_type):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_answer = data.get('user_answer')
+        correct_answer = data.get('correct_answer')
 
-# Save memory test results
-@app.route('/save_memory_result', methods=['POST'])
-def save_memory_result():
-    return save_test_result('memory')
+        if not user_answer or not correct_answer:
+            return JsonResponse({'message': 'Missing required fields'}, status=400)
 
-# Save reading test results
-@app.route('/save_reading_result', methods=['POST'])
-def save_reading_result():
-    return save_test_result('reading')
+        result = "Correct" if user_answer == correct_answer else "Incorrect"
+        timestamp = timezone.now()
+        time_taken = data.get('time_taken', 0)
+        correct_attempts = data.get('correct_attempts', 0)
+        incorrect_attempts = data.get('incorrect_attempts', 0)
 
-# General function to save test results
-def save_test_result(test_type):
-    data = request.get_json()
-    user_answer = data.get('user_answer')
-    correct_answer = data.get('correct_answer')
-
-    if not user_answer or not correct_answer:
-        return jsonify({'message': 'Missing required fields'}), 400
-
-    result = "Correct" if user_answer == correct_answer else "Incorrect"
-    timestamp = datetime.datetime.now()
-
-    # Extract optional fields with default values
-    time_taken = data.get('time_taken', 0)
-    correct_attempts = data.get('correct_attempts', 0)
-    incorrect_attempts = data.get('incorrect_attempts', 0)
-
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({'message': 'Database connection error'}), 500
-
-    cursor = conn.cursor()
-    try:
-        query = f'''INSERT INTO {test_type}_test_results 
-                    (test_type, user_answer, correct_answer, result, time_taken, correct_attempts, incorrect_attempts, timestamp) 
+        query = f'''INSERT INTO {test_type}_test_results
+                    (test_type, user_answer, correct_answer, result, time_taken, correct_attempts, incorrect_attempts, timestamp)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'''
+        try:
+            execute_query(query, (test_type, user_answer, correct_answer, result, time_taken, correct_attempts, incorrect_attempts, timestamp))
+            return JsonResponse({"message": "Result saved successfully!"})
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=500)
 
-        # Execute the query
-        cursor.execute(query, 
-                       (test_type, user_answer, correct_answer, result, time_taken, correct_attempts, incorrect_attempts, timestamp))
-        conn.commit()
-        return jsonify({"message": "Result saved successfully!"})
-    except mysql.connector.Error as err:
-        return jsonify({'message': str(err)}), 500  # Improved error handling
-    finally:
-        cursor.close()
-        conn.close()
-# Calculate performance for memory tests
-@app.route('/calculate_performance', methods=['GET'])
-def calculate_performance():
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({'message': 'Database connection error'}), 500
-
-    cursor = conn.cursor()
+# Calculate performance view
+def calculate_performance(request):
+    query = 'SELECT correct_attempts, incorrect_attempts FROM memory_test_results'
     try:
-        cursor.execute('SELECT correct_attempts, incorrect_attempts FROM memory_test_results')
-        results = cursor.fetchall()
-
+        results = execute_query(query)
         total_correct = sum(result[0] for result in results)
         total_incorrect = sum(result[1] for result in results)
         total_tests = len(results)
 
-        if total_tests > 0:
-            score = (total_correct / total_tests) * 100  # Score as a percentage
-            memory_capacity = (total_correct / total_tests) * 100
-        else:
-            score = 0
-            memory_capacity = 0
+        score = (total_correct / total_tests) * 100 if total_tests > 0 else 0
+        memory_capacity = (total_correct / total_tests) * 100 if total_tests > 0 else 0
 
-        return jsonify({
+        return JsonResponse({
             "score": score,
             "total_correct": total_correct,
             "total_incorrect": total_incorrect,
             "memory_capacity": memory_capacity
         })
-    except mysql.connector.Error as err:
-        return jsonify({'message': str(err)}), 500  # Improved error handling
-    finally:
-        cursor.close()
-        conn.close()
+    except Exception as e:
+        return JsonResponse({'message': str(e)}, status=500)
 
-# Route to handle predictions
-@app.route('/dyslexia_assessment')
-def dyslexia_assessment():
-    return render_template('dyslexia_assessment.html')
+# Dyslexia assessment view
+def dyslexia_assessment(request):
+    return render(request, 'dyslexia_assessment.html')
 
-@app.route('/get_username/<int:user_id>', methods=['GET'])
-def get_username(user_id):
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({'status': 'error', 'message': 'Database connection error'}), 500
-
-    cursor = conn.cursor(dictionary=True)
+# Get username view
+def get_username(request, user_id):
+    query = "SELECT first_name FROM users WHERE id = %s"
     try:
-        cursor.execute("SELECT first_name FROM users WHERE id = %s", (user_id,))
-        user = cursor.fetchone()
-
+        user = execute_query(query, (user_id,))
         if user:
-            return jsonify({'status': 'success', 'username': user['first_name']})
+            return JsonResponse({'status': 'success', 'username': user[0][0]})
         else:
-            return jsonify({'status': 'error', 'message': 'User not found'}), 404
-    except mysql.connector.Error as err:
-        return jsonify({'status': 'error', 'message': str(err)}), 500
-    finally:
-        cursor.close()
-        conn.close()
+            return JsonResponse({'status': 'error', 'message': 'User not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-@app.route('/dashboard', methods=['GET'])
-def dashboard():
-    # Fetch the first name from the users table
-    conn = get_db_connection()
-    if not conn:
-        return "Database connection error", 500
-
-    cursor = conn.cursor()
+# Dashboard view
+def dashboard(request):
+    query = "SELECT first_name FROM users LIMIT 1"
     try:
-        cursor.execute("SELECT first_name FROM users LIMIT 1")  # Adjust the query as needed
-        result = cursor.fetchone()
-        first_name = result[0] if result else "User"
-
-        return render_template('dashboard.html', first_name=first_name)
-    except mysql.connector.Error as err:
-        return f"Database error: {str(err)}", 500
-    finally:
-        cursor.close()
-        conn.close()
+        result = execute_query(query)
+        first_name = result[0][0] if result else "User"
+        return render(request, 'dashboard.html', {'first_name': first_name})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 # Load data from CSV file
 def load_data(filename):
@@ -281,6 +172,21 @@ def load_data(filename):
         print(f"File {filename} not found.")
     return data
 
-# Run the application
-if __name__ == '__main__':
-    app.run(debug=True)
+# URL patterns
+urlpatterns = [
+    path('', index, name='index'),
+    path('signup/', signup, name='signup'),
+    path('signin/', signin, name='signin'),
+    path('selection/', selection, name='selection'),
+    path('save_personality/', save_personality, name='save_personality'),
+    path('attention_test/', attention_test, name='attention_test'),
+    path('memory_test/', memory_test, name='memory_test'),
+    path('reading_test/', reading_test, name='reading_test'),
+    path('save_attention_result/', lambda request: save_test_result(request, 'attention'), name='save_attention_result'),
+    path('save_memory_result/', lambda request: save_test_result(request, 'memory'), name='save_memory_result'),
+    path('save_reading_result/', lambda request: save_test_result(request, 'reading'), name='save_reading_result'),
+    path('calculate_performance/', calculate_performance, name='calculate_performance'),
+    path('dyslexia_assessment/', dyslexia_assessment, name='dyslexia_assessment'),
+    path('get_username/<int:user_id>/', get_username, name='get_username'),
+    path('dashboard/', dashboard, name='dashboard'),
+]
